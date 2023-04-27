@@ -1,11 +1,13 @@
 import { Block } from 'payload/types';
+import imagen from '../../field/media/imagen';
+import recurso from '../../field/media/recursos';
 
 
 const ContentWithImageBlock: Block = {
   slug: 'contenido-con-imagen', // required
   fields: [ // required
     {
-      name: 'tipoDeLayout',
+      name: 'estiloDeContenido',
       type: 'select',
       defaultValue: 'uno',
       options: [
@@ -29,41 +31,13 @@ const ContentWithImageBlock: Block = {
       type:  'textarea',  
       required: true,
     },
+    imagen,
     {
-      name: 'imagen',
-      type: 'upload', 
-      relationTo: 'media',
-      filterOptions: {
-        or: [
-          {
-            clase: {
-              equals: 'imagen',
-            }
-          }
-        ]
-      },
-      required: true,
-    },
-    {
-      name: 'tieneIlustracion',
+      name: 'nesecitaUnRecurso',
       type: 'checkbox',
       defaultValue: false,
     },
-    {
-      name: 'ilustracion',
-      type: 'upload',
-      relationTo: 'media',
-      filterOptions: {
-        or: [
-          {
-            clase: {
-              equals: 'recurso',
-            }
-          }
-        ]
-      },
-      required: true,
-    },
+    recurso,
     {
       name: 'nesecitaUrl',
       type: 'checkbox',

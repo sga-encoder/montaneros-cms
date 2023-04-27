@@ -1,8 +1,9 @@
 import { Block } from 'payload/types';
+import recurso from '../../field/media/recursos';
 
 
 const ContentBlock: Block = {
-  slug: 'content', // required
+  slug: 'contenido', // required
   fields: [ // required
     {
       name: 'titulo',
@@ -13,12 +14,18 @@ const ContentBlock: Block = {
       name:  'contenido', 
       type:  'textarea',  
       required: true,
+    },  
+    {
+      name: 'nesecitaUnRecurso',
+      type: 'checkbox',
+      defaultValue: false,
     },
+    recurso,
     {
       name: 'nesecitaUrl',
       type: 'checkbox',
       defaultValue: false,
-    },
+    },        
     {
       name: 'url',
       type: 'text',

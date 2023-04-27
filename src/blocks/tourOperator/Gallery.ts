@@ -1,4 +1,5 @@
 import { Block } from 'payload/types';
+import imagen from '../../field/media/imagen';
 
 
 const GalleryTourOperatorBlock: Block = {
@@ -9,21 +10,7 @@ const GalleryTourOperatorBlock: Block = {
       type: 'array',
       minRows: 2,
       fields: [
-        {
-          name: 'imagen',
-          type: 'upload',
-          relationTo: 'media',
-          filterOptions: {
-            or: [
-              {
-                clase: {
-                  equals: 'imagen',
-                }
-              }
-            ]
-          },
-          required: true,
-        },
+        imagen
       ]
     },
   ]

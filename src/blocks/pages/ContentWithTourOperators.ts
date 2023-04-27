@@ -1,6 +1,9 @@
 import { Block } from 'payload/types';
-import ContentBlock from './content';
+import ContentBlock from './Content';
 import ContentWithImageBlock from './ContentWithImage';
+import translateX from '../../field/translateX';
+import translateY from '../../field/translateY';
+import ilustracion from '../../field/media/ilustracion';
 
 
 const ContentWithTourOperatorsBlock: Block = {
@@ -9,13 +12,21 @@ const ContentWithTourOperatorsBlock: Block = {
     {
       name: 'tipoDeContenido',
       type: 'blocks',
+      maxRows: 1,
+      minRows: 1,
       blocks: [
         ContentBlock,
         ContentWithImageBlock
       ]
     },
     {
-      name: 'tourOperadora',
+      name: 'nesecitaIlustracion',
+      type: 'checkbox',
+      defaultValue: false,
+    },
+    ilustracion,
+    {
+      name: 'tourOperadoras',
       type: 'array',
       fields: [
         {

@@ -9,6 +9,13 @@ app.get('/', (_, res) => {
   res.redirect('/admin');
 });
 
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
+
+
 const start = async () => {
   // Initialize Payload
   await payload.init({

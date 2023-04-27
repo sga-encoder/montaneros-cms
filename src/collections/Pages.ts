@@ -1,16 +1,21 @@
 import { CollectionConfig } from 'payload/types';
 import { isEditor } from '../access/isAdmin';
 import { publishedOnly } from '../access/publishedOnly';
-import ContentBlock from '../blocks/pages/content';
+import ContentBlock from '../blocks/pages/Content';
 import ContentWithImageBlock from '../blocks/pages/ContentWithImage';
 import ContentWithTourOperatorsBlock from '../blocks/pages/ContentWithTourOperators';
 import ListContentBlock from '../blocks/pages/ListContent';
 import { slugField } from '../field/slug';
+import recurso from '../field/media/recursos';
+import imagen from '../field/media/imagen';
+import SearchSectionBlock from '../blocks/pages/SearchSection';
+import User from '../blocks/pages/User';
 
 const Paginas: CollectionConfig = {
   slug: 'paginas',
   admin: {
     useAsTitle: 'titulo',
+    disableDuplicate: true,
   },
   versions: {
     drafts: true,
@@ -21,6 +26,17 @@ const Paginas: CollectionConfig = {
     readVersions: isEditor,
     update: isEditor,
     delete: isEditor,
+  },
+    hooks: {
+    beforeValidate: [({ data, req, operation }) => { 
+      if (operation === 'create') {
+        const result = { ...data, _id: data.slug, autor: req.user.id}
+        return result
+      } else if (operation === 'update') {
+        const result = { ...data, _id: data.slug}
+        return result
+      }
+    }],
   },
   fields: [
     {
@@ -36,78 +52,44 @@ const Paginas: CollectionConfig = {
           fields: [
             {
               type: 'collapsible',
-              label: 'Ecabezado',
+              label: 'Encabezado',
               fields: [
                 {
-                  name: 'imagenDeCabecera',
-                  type: 'array',
-                  minRows: 3,
-                  maxRows: 5,
-                  fields: [
-                    {
-                      name: 'imagen',
-                      type: 'upload',
-                      relationTo: 'media',
-                      filterOptions: {
-                        or: [
-                          {
-                            clase: {
-                              equals: 'imagen',
-                            }
-                          }
-                        ]
-                      },
-                      required: true,
-                    }
-                  ]
-                },
-                {
-                  name: 'recurso',
+                  name: 'encabezado',
                   type: 'group',
                   fields: [
                     {
-                      name: 'ilustracion',
-                      type: 'upload',
-                      relationTo: 'media',
-                      filterOptions: {
-                        or: [
-                          {
-                            clase: {
-                              equals: 'recurso',
-                            }
-                          }
-                        ]
-                      },
-                      required: true,
-                    },
-                    {
-                      name: 'nesecitaRotacion',
-                      type: 'checkbox',
-                      defaultValue: false,
-                    },
-                    {
-                      name: 'rotacion',
+                      name: 'estiloDeCabecera',
                       type: 'select',
-                      admin: {
-                        condition: (data, siblingData) => siblingData.nesecitaRotacion === true? true : false,
-                      },
+                      defaultValue: 'uno',
                       options: [
                         {
-                          label: '90°',
-                          value: '90',
+                          label: 'Uno',
+                          value: 'uno',
                         },
                         {
-                          label: '180°',
-                          value: '180',
+                          label: 'Dos',
+                          value: 'dos',
                         },
                         {
-                          label: '270°',
-                          value: '270',
-                        }
+                          label: 'Tres',
+                          value: 'tres',
+                        },
                       ]
-                    }
+                    },
+                    {
+                      name: 'imagenes',
+                      type: 'array',
+                      minRows: 3,
+                      maxRows: 5,
+                      fields: [
+                        imagen,
+                      ]
+                    },
+                    recurso,
                   ]
                 },
+                
               ]
             },
 
@@ -117,15 +99,23 @@ const Paginas: CollectionConfig = {
           label: 'Contenido',
           fields: [
             {
-              name: 'secciones',
-              type: 'blocks',
-              minRows: 1,
-              blocks: [
-                ContentBlock,
-                ContentWithImageBlock,
-                ContentWithTourOperatorsBlock,
-                ListContentBlock
-              ],
+              name: 'contenido',
+              type: 'group',
+              fields: [
+                {
+                  name: 'secciones',
+                  type: 'blocks',
+                  minRows: 1,
+                  blocks: [
+                    ContentBlock,
+                    ContentWithImageBlock,
+                    ContentWithTourOperatorsBlock,
+                    ListContentBlock,
+                    SearchSectionBlock,
+                    User
+                  ],
+                },
+              ]
             },
           ]
         }
@@ -149,7 +139,16 @@ const Paginas: CollectionConfig = {
           return false;
         }
       }
-    }
+    },
+    {
+      name: 'id',
+      type: 'text',
+    },
+    {
+      name: 'nesecitaUnRecurso',
+      type: 'checkbox',
+      defaultValue: true,
+    },
     
   ]
 }

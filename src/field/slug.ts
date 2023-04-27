@@ -8,10 +8,12 @@ type Slug = (fieldToUse?: string, overrides?: Partial<Field>) => Field
 export const slugField: Slug = (fieldToUse = 'title', overrides = {}) =>
   deepMerge<Field, Partial<Field>>(
     {
-      name: 'url',
-      label: 'Url',
+      name: 'slug',
+      label: 'Slug',
+      unique: true,
       type: 'text',
       index: true,
+      required: true,
       admin: {
         position: 'sidebar',
       },

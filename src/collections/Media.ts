@@ -5,11 +5,12 @@ const Media: CollectionConfig = {
   slug: 'media',
   admin: {
     pagination: {
-      defaultLimit: 50,
+      defaultLimit: 25,
     }
   },
   access: {
     create: isEditor,
+    read: () => true,
   },
   upload: {
     staticURL: '/media',
@@ -30,10 +31,6 @@ const Media: CollectionConfig = {
       {
         name: 'tablet',
         width: 1024,
-        // By specifying `undefined` or leaving a height undefined,
-        // the image will be sized to a certain width,
-        // but it will retain its original aspect ratio
-        // and calculate a height automatically.
         height: undefined,
         position: 'centre',
       },
@@ -64,6 +61,10 @@ const Media: CollectionConfig = {
           label: 'Recurso',
           value: 'recurso',
         },
+        {
+          label: 'Logo',
+          value: 'logo'
+        }
       ],
     },
     {

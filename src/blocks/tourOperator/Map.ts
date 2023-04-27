@@ -6,11 +6,8 @@ const MapTourOperatorBlock: Block = {
   fields: [ 
     {
       name: 'iframeDeLaUbicacion',
-      type: 'code',
-      label: 'Se encuentra en el sitio de Google Maps. En la seccion de compartir. Insertar un mapa. Copie el iframe y peguelo aquí.',
-      admin: {
-        language: 'html',
-      },
+      type: 'textarea',
+      label: 'Se encuentra en el sitio de Google Maps. En la seccion de compartir. Insertar un mapa. Copie el link que esta iframe y peguelo aquí.',
       required: true,
     },
   ],

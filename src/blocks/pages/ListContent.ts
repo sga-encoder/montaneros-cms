@@ -1,9 +1,22 @@
 import { Block } from 'payload/types';
+import ilustracion from '../../field/media/ilustracion';
+import recurso from '../../field/media/recursos';
 
 
 const ListContentBlock: Block = {
-  slug: 'lists-de-contenido', // required
+  slug: 'lista-con-contenido', // required
   fields: [ // required
+    {
+      name: 'estiloDeContenido',
+      type: 'select',
+      defaultValue: 'uno',
+      options: [
+        {
+          label: 'Uno',
+          value: 'uno',
+        },
+      ]
+    },
     {
       name: 'titulo',
       type: 'text',
@@ -12,9 +25,6 @@ const ListContentBlock: Block = {
     {
       name: 'puntos',
       type: 'array',
-      admin: {
-        condition: (data, siblingData) => siblingData.tipos === 'lista' ? true : false,
-      },
       fields: [
         {
           name: 'numero',
@@ -27,13 +37,24 @@ const ListContentBlock: Block = {
           required: true,
         },
         {
-          name: 'ilustracion',
-          type: 'upload', 
-          relationTo: 'media',
-          required: true,
+          name: 'nesecitaIlustracion',
+          type: 'checkbox',
+          defaultValue: true,
+        },
+        ilustracion,
+        {
+          name: 'invertido',
+          type: 'checkbox',
+          defaultValue: false,
         },
       ]
     },
+    {
+      name: 'nesecitaUnRecurso',
+      type: 'checkbox',
+      defaultValue: false,
+    },
+    recurso,
     {
       name: 'nesecitaUrl',
       type: 'checkbox',
