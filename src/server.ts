@@ -1,5 +1,6 @@
 import express from 'express';
 import payload from 'payload';
+// import { createMediaLibrary } from "cloudinary";
 
 require('dotenv').config();
 const app = express();
@@ -27,9 +28,19 @@ const start = async () => {
     },
   })
 
+   // Agregue el código para configurar e instanciar el widget de la biblioteca de medios de Cloudinary aquí
+  // const cloudinaryConfig = {
+  //   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  //   api_key: process.env.CLOUDINARY_API_KEY,
+  //   insertHandler: (data) => {
+  //     // Maneje la inserción de archivos multimedia seleccionados aquí
+  //   },
+  // };
+  // createMediaLibrary(cloudinaryConfig);
+
   // Add your own express routes here
 
-  app.listen(8000);
+  app.listen(3000);
 }
 
 start();
