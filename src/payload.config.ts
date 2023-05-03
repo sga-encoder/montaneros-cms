@@ -10,9 +10,10 @@ import TouristSite from './collections/TouristSite';
 import Nav from './globals/Nav';
 import 'dotenv'
 
+const url = process.env.PAYLOAD_PUBLIC_APP_URL
 export default buildConfig({
   // serverURL: process.env.PAYLOAD_PUBLIC_APP_URL || 'https://cms.montaneros.com.co',
-  serverURL: process.env.PAYLOAD_PUBLIC_APP_URL || 'https://localhost',
+  serverURL: url || 'https://localhost',
 
   admin: {
     user: Users.slug,
@@ -37,4 +38,4 @@ export default buildConfig({
   },
 });
 
-console.log('var', process)
+console.log('Url', url)
