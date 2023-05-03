@@ -36,3 +36,5 @@ export default buildConfig({
     schemaOutputFile: path.resolve(__dirname, 'generated-schema.graphql'),
   },
 });
+
+console.log('var', process)
