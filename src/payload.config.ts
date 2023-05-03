@@ -10,11 +10,8 @@ import TouristSite from './collections/TouristSite';
 import Nav from './globals/Nav';
 import 'dotenv'
 
-const url = process.env.PAYLOAD_PUBLIC_APP_URL
 export default buildConfig({
-  // serverURL: process.env.PAYLOAD_PUBLIC_APP_URL || 'https://cms.montaneros.com.co',
-  serverURL: url || 'https://localhost',
-
+  serverURL: 'https://cms.montaneros.com.co',
   admin: {
     user: Users.slug,
   },
@@ -37,5 +34,3 @@ export default buildConfig({
     schemaOutputFile: path.resolve(__dirname, 'generated-schema.graphql'),
   },
 });
-
-console.log('Url', url)
