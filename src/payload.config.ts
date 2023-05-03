@@ -8,9 +8,12 @@ import Blog from './collections/Blog';
 import TouristResource from './collections/TouristResource';
 import TouristSite from './collections/TouristSite';
 import Nav from './globals/Nav';
+import 'dotenv'
 
 export default buildConfig({
-  serverURL: process.env.PAYLOAD_PUBLIC_APP_URL || 'https://cms.montaneros.com.co',
+  // serverURL: process.env.PAYLOAD_PUBLIC_APP_URL || 'https://cms.montaneros.com.co',
+  serverURL: process.env.PAYLOAD_PUBLIC_APP_URL || 'https://localhost',
+
   admin: {
     user: Users.slug,
   },
