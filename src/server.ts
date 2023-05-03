@@ -43,7 +43,7 @@ const start = async () => {
 
   app.listen(process.env.PORT || 3000);
 
-  console.log(process)
+  console.log('variables',process.env)
 
 }
 
