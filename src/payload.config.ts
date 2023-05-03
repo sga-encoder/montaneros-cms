@@ -10,7 +10,7 @@ import TouristSite from './collections/TouristSite';
 import Nav from './globals/Nav';
 
 export default buildConfig({
-  serverURL: process.env.PAYLOAD_PUBLIC_APP_URL || 'http://localhost:3000',
+  serverURL: process.env.PAYLOAD_PUBLIC_APP_URL || 'http://localhost',
   admin: {
     user: Users.slug,
   },
