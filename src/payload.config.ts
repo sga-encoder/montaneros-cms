@@ -11,7 +11,7 @@ import Nav from './globals/Nav';
 import 'dotenv'
 
 export default buildConfig({
-  serverURL: process.env.PAYLOAD_PUBLIC_SERVER_URL || 'https://montaneros-cms.onrender.com',
+  serverURL: process.env.PAYLOAD_PUBLIC_SERVER_URL || 'https://montaneros-cms-cpmn.onrender.com',
   admin: {
     user: Users.slug,
   },
