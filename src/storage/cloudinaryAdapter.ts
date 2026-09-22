@@ -10,9 +10,11 @@ import path from 'path';
 // payload.config.ts (and therefore this file) is bundled into the admin
 // panel's browser build too, but the Cloudinary SDK itself uses Node-only
 // modules (fs, stream, url, querystring) that don't exist in the browser.
-// Configuring the SDK lazily (only when an adapter method actually runs,
-// which only happens server-side) plus the `webpack` fallback below keeps
-// webpack from failing to bundle the admin panel.
+// The SDK is configured lazily (only when an adapter method actually runs,
+// which only happens server-side); the webpack fallback that stubs those
+// Node builtins out lives in payload.config.ts's admin.webpack, since it
+// has to apply unconditionally (this file is always imported there, even
+// when Cloudinary isn't configured and this adapter is never called).
 
 interface Args {
   cloudName: string;
@@ -82,31 +84,5 @@ export const cloudinaryAdapter = (args: Args) => {
         return next(err);
       }
     },
-
-    // Cloudinary's SDK pulls in Node-only modules (fs, stream, url,
-    // querystring) that this collection's fields still reference when the
-    // admin panel is bundled for the browser. They're never actually
-    // exercised client-side (handleUpload/handleDelete/staticHandler only
-    // run on the server), so stub them out instead of polyfilling them.
-    webpack: (webpackConfig: any) => ({
-      ...webpackConfig,
-      resolve: {
-        ...webpackConfig.resolve,
-        fallback: {
-          ...webpackConfig.resolve?.fallback,
-          fs: false,
-          stream: false,
-          url: false,
-          querystring: false,
-          http: false,
-          https: false,
-          crypto: false,
-          zlib: false,
-          net: false,
-          tls: false,
-          child_process: false,
-        },
-      },
-    }),
   });
 };

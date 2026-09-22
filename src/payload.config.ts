@@ -44,6 +44,32 @@ export default buildConfig({
   serverURL: process.env.PAYLOAD_PUBLIC_SERVER_URL || 'https://montaneros-cms-cpmn.onrender.com',
   admin: {
     user: Users.slug,
+    // The Cloudinary SDK (imported by ./storage/cloudinaryAdapter, always
+    // reachable from this file regardless of whether the plugin below is
+    // actually enabled) pulls in Node-only modules that don't exist in the
+    // browser. This has to be unconditional: the plugin's own webpack hook
+    // only runs when cloudinaryConfigured is true, but the import itself is
+    // always bundled into the admin panel.
+    webpack: (webpackConfig) => ({
+      ...webpackConfig,
+      resolve: {
+        ...webpackConfig.resolve,
+        fallback: {
+          ...webpackConfig.resolve?.fallback,
+          fs: false,
+          stream: false,
+          url: false,
+          querystring: false,
+          http: false,
+          https: false,
+          crypto: false,
+          zlib: false,
+          net: false,
+          tls: false,
+          child_process: false,
+        },
+      },
+    }),
   },
   collections: [
     TouristResource,
