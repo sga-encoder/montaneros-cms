@@ -1,4 +1,6 @@
 import { buildConfig } from 'payload/config';
+import { cloudStorage } from '@payloadcms/plugin-cloud-storage';
+import { cloudinaryAdapter } from './storage/cloudinaryAdapter';
 import path from 'path';
 import Users from './collections/Users';
 import Media from './collections/Media';
@@ -9,6 +11,34 @@ import TouristResource from './collections/TouristResource';
 import TouristSite from './collections/TouristSite';
 import Nav from './globals/Nav';
 import 'dotenv'
+
+// Cloudinary storage for the Media collection, so uploads survive backend
+// restarts/redeploys instead of living on the container's ephemeral disk.
+// Falls back to local disk if Cloudinary isn't configured (e.g. local dev
+// without Cloudinary credentials).
+const cloudinaryConfigured = Boolean(
+  process.env.CLOUDINARY_CLOUD_NAME &&
+  process.env.CLOUDINARY_API_KEY &&
+  process.env.CLOUDINARY_API_SECRET
+);
+
+const plugins = cloudinaryConfigured
+  ? [
+      cloudStorage({
+        collections: {
+          media: {
+            adapter: cloudinaryAdapter({
+              cloudName: process.env.CLOUDINARY_CLOUD_NAME,
+              apiKey: process.env.CLOUDINARY_API_KEY,
+              apiSecret: process.env.CLOUDINARY_API_SECRET,
+              folder: process.env.CLOUDINARY_FOLDER || 'proyecto_montaneros',
+            }),
+            disablePayloadAccessControl: true,
+          },
+        },
+      }),
+    ]
+  : [];
 
 export default buildConfig({
   serverURL: process.env.PAYLOAD_PUBLIC_SERVER_URL || 'https://montaneros-cms-cpmn.onrender.com',
@@ -27,6 +57,7 @@ export default buildConfig({
   globals: [
     Nav
   ],
+  plugins,
   typescript: {
     outputFile: path.resolve(__dirname, 'payload-types.ts')
   },
