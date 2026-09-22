@@ -14,31 +14,32 @@ import 'dotenv'
 
 // Cloudinary storage for the Media collection, so uploads survive backend
 // restarts/redeploys instead of living on the container's ephemeral disk.
-// Falls back to local disk if Cloudinary isn't configured (e.g. local dev
-// without Cloudinary credentials).
-const cloudinaryConfigured = Boolean(
-  process.env.CLOUDINARY_CLOUD_NAME &&
-  process.env.CLOUDINARY_API_KEY &&
-  process.env.CLOUDINARY_API_SECRET
-);
-
-const plugins = cloudinaryConfigured
-  ? [
-      cloudStorage({
-        collections: {
-          media: {
-            adapter: cloudinaryAdapter({
-              cloudName: process.env.CLOUDINARY_CLOUD_NAME,
-              apiKey: process.env.CLOUDINARY_API_KEY,
-              apiSecret: process.env.CLOUDINARY_API_SECRET,
-              folder: process.env.CLOUDINARY_FOLDER || 'proyecto_montaneros',
-            }),
-            disablePayloadAccessControl: true,
-          },
-        },
-      }),
-    ]
-  : [];
+//
+// This is intentionally NOT conditional on the CLOUDINARY_* env vars being
+// present. Render's Docker build stage doesn't see runtime-only env vars
+// (see Dockerfile), so a conditional here previously made the webpack-built
+// admin bundle disagree with the running server about the Media
+// collection's field shape whenever credentials were only set at runtime
+// -- the admin panel crashed on load as a result. Cloudinary's own SDK call
+// (cloudinary.config()) stays lazy in cloudinaryAdapter.ts and only runs
+// server-side, so leaving the plugin always-on is safe even when real
+// credentials aren't available (e.g. local dev): uploads just fail loudly
+// instead of the whole admin panel breaking.
+const plugins = [
+  cloudStorage({
+    collections: {
+      media: {
+        adapter: cloudinaryAdapter({
+          cloudName: process.env.CLOUDINARY_CLOUD_NAME,
+          apiKey: process.env.CLOUDINARY_API_KEY,
+          apiSecret: process.env.CLOUDINARY_API_SECRET,
+          folder: process.env.CLOUDINARY_FOLDER || 'proyecto_montaneros',
+        }),
+        disablePayloadAccessControl: true,
+      },
+    },
+  }),
+];
 
 export default buildConfig({
   serverURL: process.env.PAYLOAD_PUBLIC_SERVER_URL || 'https://montaneros-cms-cpmn.onrender.com',
@@ -46,14 +47,21 @@ export default buildConfig({
     user: Users.slug,
     // The Cloudinary SDK (imported by ./storage/cloudinaryAdapter, always
     // reachable from this file regardless of whether the plugin below is
-    // actually enabled) pulls in Node-only modules that don't exist in the
-    // browser. This has to be unconditional: the plugin's own webpack hook
-    // only runs when cloudinaryConfigured is true, but the import itself is
-    // always bundled into the admin panel.
+    // actually enabled) doesn't just need Node builtins -- its own
+    // top-level module code branches on `process.version.split('.')` to
+    // pick an internal build variant, which throws immediately when the
+    // browser's webpack `process` shim has no `.version`. Aliasing the
+    // package to a lightweight mock for the browser build sidesteps that
+    // entirely: cloudinaryAdapter's real calls into the SDK only ever run
+    // server-side, so the mock never needs to do anything.
     webpack: (webpackConfig) => ({
       ...webpackConfig,
       resolve: {
         ...webpackConfig.resolve,
+        alias: {
+          ...webpackConfig.resolve?.alias,
+          cloudinary$: path.resolve(__dirname, 'storage/cloudinaryMock.ts'),
+        },
         fallback: {
           ...webpackConfig.resolve?.fallback,
           fs: false,
