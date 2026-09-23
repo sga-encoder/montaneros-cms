@@ -37,8 +37,14 @@ const ensureConfigured = ({ cloudName, apiKey, apiSecret }: Args) => {
 
 const stripExtension = (filename: string) => filename.replace(/\.[^/.]+$/, '');
 
-const publicIdFor = (folder: string, prefix: string, filename: string) =>
-  path.posix.join(folder, prefix, stripExtension(filename));
+// `prefix` is a field the plugin added to the Media collection; documents
+// uploaded before Cloudinary was wired up don't have it set, and Payload's
+// Mongo layer reads that back as `null` rather than `undefined` -- which
+// path.posix.join() throws on. Normalize both here so every call site is
+// covered instead of relying on default-parameter values (which only
+// catch `undefined`).
+const publicIdFor = (folder: string, prefix: string | null | undefined, filename: string) =>
+  path.posix.join(folder, prefix || '', stripExtension(filename));
 
 export const cloudinaryAdapter = (args: Args) => {
   const { folder = '' } = args;
